@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#3D2B4F">
+<title>Bloom — Cycle Tracker</title>
+<meta name="description" content="A calm, private way to track your cycle, mood, water and symptoms.">
+<link rel="manifest" href="manifest.json">
+<link rel="icon" href="icon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="icon.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Public+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="mobile.css">
+<link rel="stylesheet" href="dark.css">
+<link rel="stylesheet" href="animations.css">
+</head>
+<body>
+
+<div class="login-screen" id="login-screen">
+  <form class="login-card" id="login-form">
+    <div class="login-brand">
+      <span class="brand-mark" aria-hidden="true">
+        <svg viewBox="0 0 24 24" width="26" height="26"><path d="M12 3c-3.5 3-5 6.2-5 9a5 5 0 0 0 10 0c0-2.8-1.5-6-5-9z" fill="currentColor"/></svg>
+      </span>
+      <h1>Bloom</h1>
+    </div>
+    <p class="login-sub">Sign in to personalize your reminders and daily check-ins.</p>
+
+    <label class="login-field">Name
+      <input type="text" id="login-name" placeholder="Your name" autocomplete="name" required>
+    </label>
+    <label class="login-field">Phone number
+      <input type="tel" id="login-phone" placeholder="e.g. 98765 43210" autocomplete="tel" required>
+    </label>
+    <label class="login-field">Email
+      <input type="email" id="login-email" placeholder="you@example.com" autocomplete="email" required>
+    </label>
+
+    <p class="login-error" id="login-error" role="alert"></p>
+    <button type="submit" class="pill-btn wide">Continue</button>
+    <p class="login-note">Bloom has no backend server, so this isn't a verified account — it's stored only on this device and used to personalize reminders shown in this browser (not real SMS or email delivery).</p>
+  </form>
+</div>
+
+<div class="app-shell" id="app">
+
+  <!-- Top bar -->
+  <header class="topbar">
+    <div class="topbar-brand">
+      <span class="brand-mark" aria-hidden="true">
+        <svg viewBox="0 0 24 24" width="20" height="20"><path d="M12 3c-3.5 3-5 6.2-5 9a5 5 0 0 0 10 0c0-2.8-1.5-6-5-9z" fill="currentColor"/></svg>
+      </span>
+      <span class="brand-name">Bloom</span>
+    </div>
+    <button class="icon-btn" id="theme-toggle" aria-label="Toggle dark mode" title="Toggle dark mode">
+      <svg id="theme-icon" viewBox="0 0 24 24" width="20" height="20"><path fill="currentColor" d="M12 3a9 9 0 1 0 9 9 7 7 0 0 1-9-9z"/></svg>
+    </button>
+  </header>
+
+  <!-- Views -->
+  <main class="views" id="views">
+
+    <!-- HOME -->
+    <section class="view active" id="view-home" data-view="home">
+      <div class="dial-wrap">
+        <svg id="cycle-dial" class="cycle-dial" viewBox="0 0 240 240" role="img" aria-label="Current cycle progress"></svg>
+        <div class="dial-center">
+          <p class="dial-day" id="dial-day">Day 1</p>
+          <p class="dial-phase" id="dial-phase">Menstrual phase</p>
+          <p class="dial-sub" id="dial-sub">—</p>
+        </div>
+      </div>
+
+      <div class="quick-actions">
+        <button class="chip-btn" id="btn-log-period">🩸 Log period</button>
+        <button class="chip-btn" id="btn-quick-water">💧 +1 water</button>
+        <button class="chip-btn" id="btn-quick-mood">🙂 Log mood</button>
+      </div>
+
+      <div class="card" id="home-forecast">
+        <h3>Forecast</h3>
+        <div class="forecast-grid" id="forecast-grid"></div>
+      </div>
+
+      <div class="card" id="home-today">
+        <h3>Today at a glance</h3>
+        <div id="today-summary" class="today-summary"></div>
+      </div>
+
+      <div class="card" id="home-recommend">
+        <h3>Today's recommendations</h3>
+        <ul class="tip-list" id="tip-list"></ul>
+      </div>
+
+      <div class="card checkin-banner" id="checkin-banner">
+        <div>
+          <h3 id="checkin-banner-title">How was your day?</h3>
+          <p class="hint" id="checkin-banner-sub">Log your mood, meals, and water, then complete your evening check-in.</p>
+        </div>
+        <button class="pill-btn" id="checkin-banner-btn">Check in</button>
+      </div>
+    </section>
+
+    <!-- CALENDAR -->
+    <section class="view" id="view-calendar" data-view="calendar">
+      <div class="calendar-header">
+        <button class="icon-btn" id="cal-prev" aria-label="Previous month">‹</button>
+        <h2 id="cal-month-label">Month</h2>
+        <button class="icon-btn" id="cal-next" aria-label="Next month">›</button>
+      </div>
+      <div class="calendar-legend">
+        <span><i class="dot dot-period"></i> Period</span>
+        <span><i class="dot dot-fertile"></i> Fertile</span>
+        <span><i class="dot dot-ovulation"></i> Ovulation</span>
+        <span><i class="dot dot-predicted"></i> Predicted</span>
+      </div>
+      <div class="calendar-weekdays" id="cal-weekdays"></div>
+      <div class="calendar-grid" id="cal-grid"></div>
+    </section>
+
+    <!-- LOG (water, mood, symptoms, notes) -->
+    <section class="view" id="view-log" data-view="log">
+      <div class="log-datebar">
+        <button class="icon-btn" id="log-prev-day" aria-label="Previous day">‹</button>
+        <h2 id="log-date-label">Today</h2>
+        <button class="icon-btn" id="log-next-day" aria-label="Next day">›</button>
+      </div>
+
+      <div class="card">
+        <h3>Meals &amp; food</h3>
+        <p class="field-label">Healthy picks</p>
+        <div class="food-chip-row" id="food-presets-healthy"></div>
+        <p class="field-label">Fast food</p>
+        <div class="food-chip-row" id="food-presets-fastfood"></div>
+        <div class="food-custom-row">
+          <input type="text" id="food-custom-input" placeholder="Add something else…">
+          <button class="pill-btn" id="food-custom-add">Add</button>
+        </div>
+        <div class="food-list" id="food-list"></div>
+        <div class="compensation-feed" id="compensation-feed"></div>
+      </div>
+
+      <div class="card">
+        <h3>Water intake</h3>
+        <div class="water-row" id="water-row"></div>
+        <p class="water-caption" id="water-caption">0 / 8 glasses</p>
+        <div class="water-controls">
+          <button class="pill-btn" id="water-minus">−</button>
+          <button class="pill-btn" id="water-plus">+</button>
+          <label class="target-label">Target
+            <input type="number" id="water-target" min="1" max="20" value="8">
+          </label>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3>Mood</h3>
+        <div class="mood-picker" id="mood-picker"></div>
+      </div>
+
+      <div class="card">
+        <h3>Symptoms</h3>
+        <div class="symptom-chips" id="symptom-chips"></div>
+      </div>
+
+      <div class="card">
+        <h3>Notes</h3>
+        <textarea id="notes-textarea" rows="4" placeholder="Anything worth remembering about today…"></textarea>
+        <div class="note-save-row">
+          <span class="save-status" id="note-status"></span>
+          <button class="pill-btn" id="notes-save">Save note</button>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3>Evening check-in</h3>
+        <p class="field-label">Mood</p>
+        <div class="mood-picker small" id="checkin-mood-picker"></div>
+        <div class="checkin-recap" id="checkin-recap"></div>
+        <div class="note-save-row">
+          <span class="save-status" id="checkin-status"></span>
+          <button class="pill-btn wide" id="checkin-complete-btn">Complete check-in</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- STATS -->
+    <section class="view" id="view-stats" data-view="stats">
+      <div class="card">
+        <h3>Cycle length history</h3>
+        <canvas id="chart-cycle" width="320" height="160"></canvas>
+        <p class="stat-line" id="stat-avg-cycle">—</p>
+      </div>
+      <div class="card">
+        <h3>Period length history</h3>
+        <canvas id="chart-period" width="320" height="120"></canvas>
+        <p class="stat-line" id="stat-avg-period">—</p>
+      </div>
+      <div class="card">
+        <h3>Water, last 7 days</h3>
+        <canvas id="chart-water" width="320" height="140"></canvas>
+      </div>
+      <div class="card">
+        <h3>Mood, last 14 days</h3>
+        <canvas id="chart-mood" width="320" height="120"></canvas>
+      </div>
+    </section>
+
+    <!-- SETTINGS -->
+    <section class="view" id="view-settings" data-view="settings">
+      <div class="card">
+        <h3>Account</h3>
+        <div class="modal-row"><span>Name</span><strong id="account-name">—</strong></div>
+        <div class="modal-row"><span>Phone</span><strong id="account-phone">—</strong></div>
+        <div class="modal-row"><span>Email</span><strong id="account-email">—</strong></div>
+        <p class="hint">Stored only on this device — used to personalize reminders, not for real SMS/email delivery.</p>
+        <div class="data-actions">
+          <button class="pill-btn ghost" id="account-edit">Edit profile</button>
+          <button class="pill-btn danger" id="account-logout">Log out</button>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3>Cycle settings</h3>
+        <label class="field-row">Average cycle length (days)
+          <input type="number" id="settings-cycle-length" min="15" max="60">
+        </label>
+        <label class="field-row">Average period length (days)
+          <input type="number" id="settings-period-length" min="1" max="15">
+        </label>
+      </div>
+
+      <div class="card">
+        <h3>Reminders</h3>
+        <label class="switch-row">
+          <span>Daily water reminder</span>
+          <input type="checkbox" id="settings-water-reminder">
+        </label>
+        <label class="switch-row">
+          <span>Period forecast reminder</span>
+          <input type="checkbox" id="settings-period-reminder">
+        </label>
+        <label class="switch-row">
+          <span>Healthy eating reminder</span>
+          <input type="checkbox" id="settings-healthy-reminder">
+        </label>
+        <label class="switch-row">
+          <span>Evening check-in reminder</span>
+          <input type="checkbox" id="settings-checkin-reminder">
+        </label>
+        <p class="hint" id="notification-hint"></p>
+      </div>
+
+      <div class="card">
+        <h3>Appearance</h3>
+        <label class="switch-row">
+          <span>Dark mode</span>
+          <input type="checkbox" id="settings-dark-mode">
+        </label>
+      </div>
+
+      <div class="card">
+        <h3>Your data</h3>
+        <p class="hint">Everything stays on this device. Nothing is uploaded anywhere.</p>
+        <div class="data-actions">
+          <button class="pill-btn" id="export-data">Export data</button>
+          <button class="pill-btn ghost" id="import-data-btn">Import data</button>
+          <input type="file" id="import-data-file" accept="application/json" hidden>
+        </div>
+        <button class="pill-btn danger" id="clear-data">Erase all data</button>
+      </div>
+
+      <p class="version-tag">Bloom · offline &amp; private</p>
+    </section>
+
+  </main>
+
+  <!-- Bottom nav -->
+  <nav class="bottom-nav" id="bottom-nav" aria-label="Primary">
+    <button class="nav-btn active" data-nav="home">
+      <svg viewBox="0 0 24 24" width="22" height="22"><path fill="currentColor" d="M12 3 2 12h3v8h6v-5h2v5h6v-8h3z"/></svg>
+      <span>Home</span>
+    </button>
+    <button class="nav-btn" data-nav="calendar">
+      <svg viewBox="0 0 24 24" width="22" height="22"><path fill="currentColor" d="M7 2v2H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2h-2V2h-2v2H9V2zm12 8v10H5V10z"/></svg>
+      <span>Calendar</span>
+    </button>
+    <button class="nav-btn" data-nav="log">
+      <svg viewBox="0 0 24 24" width="22" height="22"><path fill="currentColor" d="M12 2a5 5 0 0 0-5 5c0 3.5 5 11 5 11s5-7.5 5-11a5 5 0 0 0-5-5z"/></svg>
+      <span>Log</span>
+    </button>
+    <button class="nav-btn" data-nav="stats">
+      <svg viewBox="0 0 24 24" width="22" height="22"><path fill="currentColor" d="M5 21V9h3v12zm6 0V3h3v18zm6 0v-8h3v8z"/></svg>
+      <span>Stats</span>
+    </button>
+    <button class="nav-btn" data-nav="settings">
+      <svg viewBox="0 0 24 24" width="22" height="22"><path fill="currentColor" d="M12 8a4 4 0 1 0 0 8 4 4 0 0 0 0-8zm8.9 2.7-1.6-.5a7 7 0 0 0-.7-1.6l.9-1.4a1 1 0 0 0-.1-1.2l-1.4-1.4a1 1 0 0 0-1.2-.1l-1.4.9a7 7 0 0 0-1.6-.7l-.5-1.6a1 1 0 0 0-1-.7h-2a1 1 0 0 0-1 .7l-.5 1.6a7 7 0 0 0-1.6.7l-1.4-.9a1 1 0 0 0-1.2.1L2.2 6.6a1 1 0 0 0-.1 1.2l.9 1.4a7 7 0 0 0-.7 1.6l-1.6.5a1 1 0 0 0-.7 1v2a1 1 0 0 0 .7 1l1.6.5a7 7 0 0 0 .7 1.6l-.9 1.4a1 1 0 0 0 .1 1.2l1.4 1.4a1 1 0 0 0 1.2.1l1.4-.9a7 7 0 0 0 1.6.7l.5 1.6a1 1 0 0 0 1 .7h2a1 1 0 0 0 1-.7l.5-1.6a7 7 0 0 0 1.6-.7l1.4.9a1 1 0 0 0 1.2-.1l1.4-1.4a1 1 0 0 0 .1-1.2l-.9-1.4a7 7 0 0 0 .7-1.6l1.6-.5a1 1 0 0 0 .7-1v-2a1 1 0 0 0-.7-1z"/></svg>
+      <span>Settings</span>
+    </button>
+  </nav>
+
+  <!-- Toast -->
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+  <!-- Day detail modal (calendar) -->
+  <div class="modal-backdrop" id="modal-backdrop">
+    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+      <div class="modal-head">
+        <h3 id="modal-title">Day</h3>
+        <button class="icon-btn" id="modal-close" aria-label="Close">✕</button>
+      </div>
+      <div class="modal-body" id="modal-body"></div>
+    </div>
+  </div>
+
+</div>
+
+<script src="storage.js"></script>
+<script src="cycle.js"></script>
+<script src="recommend.js"></script>
+<script src="theme.js"></script>
+<script src="water.js"></script>
+<script src="mood.js"></script>
+<script src="symptoms.js"></script>
+<script src="notes.js"></script>
+<script src="foodlog.js"></script>
+<script src="checkin.js"></script>
+<script src="calendar.js"></script>
+<script src="charts.js"></script>
+<script src="notification.js"></script>
+<script src="auth.js"></script>
+<script src="ui.js"></script>
+<script src="script.js"></script>
+</body>
+</html>

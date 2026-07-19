@@ -1,0 +1,25 @@
+{
+  "name": "Bloom — Cycle Tracker",
+  "short_name": "Bloom",
+  "description": "A calm, private way to track your cycle, mood, water and symptoms. All data stays on your device.",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#F6F1F5",
+  "theme_color": "#3D2B4F",
+  "icons": [
+    {
+      "src": "icon.svg",
+      "sizes": "192x192 512x512",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    },
+    {
+      "src": "icon.svg",
+      "sizes": "192x192 512x512",
+      "type": "image/svg+xml",
+      "purpose": "maskable"
+    }
+  ]
+}

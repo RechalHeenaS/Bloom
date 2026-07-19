@@ -1,0 +1,58 @@
+/* ==========================================================================
+   Bloom — motion
+   Small, purposeful transitions: view fades, dial fill, a gentle bloom
+   pulse on the home dial center. All disabled under reduced-motion.
+   ========================================================================== */
+
+.view {
+  animation: view-in 0.28s ease both;
+}
+
+@keyframes view-in {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.dial-progress {
+  animation: dial-in 0.9s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@keyframes dial-in {
+  from { stroke-dasharray: 0 999; }
+}
+
+.dial-center {
+  animation: bloom-pulse 5s ease-in-out infinite;
+}
+
+@keyframes bloom-pulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.015); }
+}
+
+.chip-btn, .pill-btn, .mood-btn, .symptom-chip, .cal-cell, .nav-btn, .drop {
+  transition: background 0.15s ease, color 0.15s ease, transform 0.12s ease, box-shadow 0.15s ease;
+}
+
+.card {
+  animation: card-in 0.35s ease both;
+}
+@keyframes card-in {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.card:nth-of-type(2) { animation-delay: 0.04s; }
+.card:nth-of-type(3) { animation-delay: 0.08s; }
+.card:nth-of-type(4) { animation-delay: 0.12s; }
+
+.toast {
+  transition: opacity 0.2s ease, transform 0.2s ease;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+  }
+}

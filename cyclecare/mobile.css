@@ -1,0 +1,68 @@
+/* ==========================================================================
+   Bloom — mobile refinements
+   Base styles are already mobile-first; this file tightens things up on
+   very small screens and adjusts for larger tablet/desktop widths.
+   ========================================================================== */
+
+/* Small phones (< 380px) */
+@media (max-width: 380px) {
+  .views { padding: 16px 12px calc(var(--nav-height) + 24px); }
+  .dial-wrap { width: 200px; height: 200px; }
+  .dial-day { font-size: 1.6rem; }
+  .forecast-grid { gap: 8px; }
+  .mood-picker { grid-template-columns: repeat(3, 1fr); }
+  .card { padding: 14px 14px 16px; }
+  .nav-btn span { font-size: 0.62rem; }
+  .checkin-banner { flex-direction: column; align-items: flex-start; }
+  .checkin-banner .pill-btn { width: 100%; }
+  .login-card { padding: 22px 18px; }
+}
+
+/* Larger phones / small tablets, keep single column but breathe more */
+@media (min-width: 480px) {
+  .app-shell {
+    border-left: 1px solid var(--border);
+    border-right: 1px solid var(--border);
+  }
+}
+
+/* Desktop / wide viewport: center the phone-shaped shell, no need to
+   stretch content edge-to-edge. */
+@media (min-width: 720px) {
+  body {
+    background: var(--surface-2);
+  }
+  .app-shell {
+    margin: 24px auto;
+    min-height: calc(100vh - 48px);
+    border-radius: 28px;
+    overflow: hidden;
+    box-shadow: 0 20px 60px rgba(60, 30, 50, 0.15);
+  }
+  .bottom-nav {
+    border-radius: 0 0 28px 28px;
+  }
+}
+
+/* Landscape phones: shrink the hero dial so Home doesn't require scrolling
+   to see quick actions. */
+@media (max-height: 480px) and (orientation: landscape) {
+  .dial-wrap { width: 160px; height: 160px; margin: 8px auto 12px; }
+  .dial-day { font-size: 1.3rem; }
+}
+
+/* Respect safe areas on notched devices for the top bar too */
+@media (display-mode: standalone) {
+  .topbar {
+    padding-top: env(safe-area-inset-top);
+    height: calc(var(--topbar-height) + env(safe-area-inset-top));
+  }
+}
+
+/* Touch target comfort */
+@media (pointer: coarse) {
+  .nav-btn, .icon-btn, .chip-btn, .pill-btn, .mood-btn, .symptom-chip, .cal-cell {
+    min-height: 40px;
+  }
+  .drop { padding: 4px; }
+}

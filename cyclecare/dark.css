@@ -1,0 +1,78 @@
+/* ==========================================================================
+   Bloom — dark theme
+   Applied via body.dark, toggled from theme.js and persisted in settings.
+   ========================================================================== */
+
+body.dark {
+  --bg: #19111C;
+  --surface: #241A28;
+  --surface-2: #2E212F;
+  --text: #F3E9F1;
+  --text-muted: #A996AE;
+  --border: #3A2B3D;
+
+  --accent: #E27C9A;
+  --accent-soft: #4A2F3B;
+  --accent-strong: #F2A6BC;
+  --sage: #9FC19B;
+  --amber: #E9B77F;
+  --lavender: #A793C7;
+  --sky: #8FC2E4;
+
+  --dial-track: #33262F;
+}
+
+body.dark .topbar {
+  background: color-mix(in srgb, var(--bg) 80%, transparent);
+}
+
+body.dark .bottom-nav {
+  background: color-mix(in srgb, var(--surface) 85%, transparent);
+}
+
+body.dark .cal-cell {
+  color: var(--text);
+}
+
+body.dark .cal-cell.period,
+body.dark .cal-cell.ovulation {
+  color: #1a1015;
+}
+
+body.dark .pill-btn {
+  color: #1a1015;
+}
+body.dark .pill-btn.ghost {
+  color: var(--accent);
+}
+body.dark .pill-btn.danger {
+  color: #F2A6A0;
+}
+
+body.dark .symptom-chip.selected {
+  color: #1a1015;
+}
+
+body.dark .toast {
+  background: var(--surface-2);
+  color: var(--text);
+  border: 1px solid var(--border);
+}
+
+@media (min-width: 720px) {
+  body.dark { background: #0F0A11; }
+  body.dark .app-shell {
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+  }
+}
+
+body.dark .login-card {
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+}
+
+body.dark .food-chip.healthy { color: var(--sage); }
+body.dark .food-chip.fastfood { color: var(--accent-strong); }
+
+body.dark .compensation-card {
+  background: color-mix(in srgb, var(--accent) 14%, var(--surface-2));
+}
